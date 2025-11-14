@@ -1,0 +1,304 @@
+anton.tune {
+    trajectories = [{
+        outdir = energy.etr                    # an energy-only trajectory (optional)
+        interval = 12.0                        # ps (multiple of dt * barostat.interval)
+        selection = none                       # no atoms (energies only)
+    } {
+        outdir = nowater.dtr                   # a filtered trajectory
+        interval = 1200.0                      # ps (multiple of the energy interval)
+        selection = "not water"                # filtering specification (vmd syntax)
+    } {
+        outdir = all.dtr                       # it's good practice to capture all atoms periodically
+        interval = 12000.0                     # ps (multiple of other intervals)
+        selection = "all"
+    }]
+    last_time = 12000.0                        # simulation length (multiple of the trajectory intervals)
+}
+
+calmdown.enabled=False                         # set false to disable equilibration substep
+
+integrator {
+    Multigrator {
+        thermostat {
+            interval = 48                      # thermostat interval in timesteps (multiple of respa.nonbonded_far_interval)
+            type = Antithetic
+        }
+        barostat {
+            interval = 480                     # barostat interval in timesteps (multiple of thermostat.interval)
+            type = MC                          # Change to "none" for NVT
+        }
+    }
+
+    dt = 0.0025                                # ps
+
+    pressure {
+        isotropy = isotropic                   # Change to "semi_isotropic" for a membrane
+        p_ref = 1.0                            # reference pressure in bar
+        tension_ref = [0 0 0 0 0 0 0 0 0]      # surface tension in bar-A.  Only the last (z,z) entry is used.
+    }
+
+    respa {
+        bonded_interval = 1
+        nonbonded_far_interval = 3             # respa interval in timesteps
+        nonbonded_near_interval = 1
+    }
+
+    temperature = [{
+        T_ref = 300.00                         # thermostat temperature in K
+    }]
+
+    type = Multigrator                         # Change to "V_NVE" for NVE
+}
+
+force.nonbonded.taper=shift                    # required by MC barostat
+
+anton.chem.random.thermalize=true
+
+# The above setting are conserved in all ANTON 3 simulations
+
+# The below are specific to the system 
+# anton.chem.group_restraints (type=position) anchor protein complexes within their subbox
+# anton.chem.group_restraints (type=distance) restrain forming and breaking bond distance in TS structure
+
+anton.chem.group_restraints {
+  interval = 6
+  groups   = [ 
+{       name   = protein0
+       center = mass
+       query  = "resid 1 to 155"}
+{       name   = protein1
+       center = mass
+       query  = "resid 156 to 310"}
+{       name   = protein2
+       center = mass
+       query  = "resid 311 to 465"}
+{       name   = protein3
+       center = mass
+       query  = "resid 466 to 620"}
+{       name   = protein4
+       center = mass
+       query  = "resid 621 to 775"}
+{       name   = protein5
+       center = mass
+       query  = "resid 776 to 930"}
+{       name   = protein6
+       center = mass
+       query  = "resid 931 to 1085"}
+{       name   = protein7
+       center = mass
+       query  = "resid 1086 to 1240"}
+{       name   = LGJ_C5
+       center = mass
+       query  = "resname LGJ and name C5"}
+{       name   = LGJ_C15
+       center = mass
+       query  = "resname LGJ and name C15"}
+{       name   = LGK_C5
+       center = mass
+       query  = "resname LGK and name C5"}
+{       name   = LGK_C15
+       center = mass
+       query  = "resname LGK and name C15"}
+{       name   = LGL_C16
+       center = mass
+       query  = "resname LGL and name C16"}
+{       name   = LGL_C27
+       center = mass
+       query  = "resname LGL and name C27"}
+{       name   = LGM_C16
+       center = mass
+       query  = "resname LGM and name C16"}
+{       name   = LGM_C27
+       center = mass
+       query  = "resname LGM and name C27"}
+{       name   = LGN_C12
+       center = mass
+       query  = "resname LGN and name C12"}
+{       name   = LGN_C18
+       center = mass
+       query  = "resname LGN and name C18"}
+{       name   = LGN_C11
+       center = mass
+       query  = "resname LGN and name C11"}
+{       name   = LGN_C22
+       center = mass
+       query  = "resname LGN and name C22"}
+{       name   = LGO_C8
+       center = mass
+       query  = "resname LGO and name C8"}
+{       name   = LGO_C3
+       center = mass
+       query  = "resname LGO and name C3"}
+{       name   = LGP_C8
+       center = mass
+       query  = "resname LGP and name C8"}
+{       name   = LGP_C3
+       center = mass
+       query  = "resname LGP and name C3"}
+  ]
+  restraints = [ 
+  {
+      type            = position                # type must be specified as "position", as opposed to "distance"
+      groups          = [ protein0 ]              # specify only one group name
+      position        = [43.75272979716816 43.84378361115886 42.55075147288066]  # coordinates of the anchor point
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 0.35
+      equilibria      = [0]                    # equilibrium distance from the anchor point
+  } 
+  {
+      type            = position                # type must be specified as "position", as opposed to "distance"
+      groups          = [ protein1 ]              # specify only one group name
+      position        = [43.85017271178222 43.793518240345804 122.53940452216499]  # coordinates of the anchor point
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 0.35
+      equilibria      = [0]                    # equilibrium distance from the anchor point
+  } 
+  {
+      type            = position                # type must be specified as "position", as opposed to "distance"
+      groups          = [ protein2 ]              # specify only one group name
+      position        = [43.83302856687894 123.98693267484177 42.69841318240399]  # coordinates of the anchor point
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 0.35
+      equilibria      = [0]                    # equilibrium distance from the anchor point
+  } 
+  {
+      type            = position                # type must be specified as "position", as opposed to "distance"
+      groups          = [ protein3 ]              # specify only one group name
+      position        = [42.33808270574555 124.06955797426244 118.0872895299386]  # coordinates of the anchor point
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 0.35
+      equilibria      = [0]                    # equilibrium distance from the anchor point
+  } 
+  {
+      type            = position                # type must be specified as "position", as opposed to "distance"
+      groups          = [ protein4 ]              # specify only one group name
+      position        = [122.93466576178983 41.72403932740977 35.989196292708584]  # coordinates of the anchor point
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 0.35
+      equilibria      = [0]                    # equilibrium distance from the anchor point
+  } 
+  {
+      type            = position                # type must be specified as "position", as opposed to "distance"
+      groups          = [ protein5 ]              # specify only one group name
+      position        = [121.42486747585411 40.78281014733857 119.46936472662567]  # coordinates of the anchor point
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 0.35
+      equilibria      = [0]                    # equilibrium distance from the anchor point
+  } 
+  {
+      type            = position                # type must be specified as "position", as opposed to "distance"
+      groups          = [ protein6 ]              # specify only one group name
+      position        = [123.39723301331772 119.3104703930801 42.54247471216018]  # coordinates of the anchor point
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 0.35
+      equilibria      = [0]                    # equilibrium distance from the anchor point
+  } 
+  {
+      type            = position                # type must be specified as "position", as opposed to "distance"
+      groups          = [ protein7 ]              # specify only one group name
+      position        = [119.68679449139253 121.90507348520836 118.98601205914638]  # coordinates of the anchor point
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 0.35
+      equilibria      = [0]                    # equilibrium distance from the anchor point
+  } 
+  {
+      type            = distance                # type must be specified as "position", as opposed to "distance"
+      groups          = [ LGJ_C5 LGJ_C15 ]              # specify only one group name
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 1000
+      equilibria      = [2.5998]                    # equilibrium distance from the anchor point
+  }
+  {
+      type            = distance                # type must be specified as "position", as opposed to "distance"
+      groups          = [ LGK_C5 LGK_C15 ]              # specify only one group name
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 1000
+      equilibria      = [2.5918]                    # equilibrium distance from the anchor point
+  }
+  {
+      type            = distance                # type must be specified as "position", as opposed to "distance"
+      groups          = [ LGL_C16 LGL_C27 ]              # specify only one group name
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 1000
+      equilibria      = [2.6971]                    # equilibrium distance from the anchor point
+  }
+  {
+      type            = distance                # type must be specified as "position", as opposed to "distance"
+      groups          = [ LGM_C16 LGM_C27 ]              # specify only one group name
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 1000
+      equilibria      = [2.6778]                    # equilibrium distance from the anchor point
+  }
+  {
+      type            = distance                # type must be specified as "position", as opposed to "distance"
+      groups          = [ LGN_C12 LGN_C18 ]              # specify only one group name
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 1000
+      equilibria      = [2.4752]                    # equilibrium distance from the anchor point
+  }
+  {
+      type            = distance                # type must be specified as "position", as opposed to "distance"
+      groups          = [ LGN_C11 LGN_C22 ]              # specify only one group name
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 1000
+      equilibria      = [3.1829]                    # equilibrium distance from the anchor point
+  }
+  {
+      type            = distance                # type must be specified as "position", as opposed to "distance"
+      groups          = [ LGO_C8 LGO_C3 ]              # specify only one group name
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 1000
+      equilibria      = [2.5291]                    # equilibrium distance from the anchor point
+  }
+  {
+      type            = distance                # type must be specified as "position", as opposed to "distance"
+      groups          = [ LGP_C8 LGP_C3 ]              # specify only one group name
+      form            = simple_harmonic         # choose between simple_harmonic or harmonic_flat_bottom form
+      spring_constant = 1000
+      equilibria      = [2.5967]                    # equilibrium distance from the anchor point
+  }
+  ]
+}
+
+# rmsd restraints are placed on the atoms involved in the 8π electrocyclization within the forming/breaking ring 
+
+anton.chem.rmsd{
+   interval = 6                            # specified in timesteps
+   models = [{
+        form            = simple_harmonic
+        spring_constant = 65                 # in kcal/mol/A
+        equilibria      = [ 0 ]              # RMSD distance in Angstroms
+        weights         = mass        # or mass or weighted
+        query           = "resname LGL and name C16 C18 C19 C21 C22 C24 C25 C27"  # msys atom selection query
+        # optional model file (default is to use boot.file):
+        #file            = "model.dms"
+        }
+        {
+        form            = simple_harmonic
+        spring_constant = 65                 # in kcal/mol/A
+        equilibria      = [ 0 ]              # RMSD distance in Angstroms
+        weights         = mass        # or mass or weighted
+        query           = "resname LGM and name C16 C18 C19 C21 C22 C24 C25 C27"  # msys atom selection query
+        # optional model file (default is to use boot.file):
+        #file            = "model.dms"
+        }
+        {
+        form            = simple_harmonic
+        spring_constant = 65                 # in kcal/mol/A
+        equilibria      = [ 0 ]              # RMSD distance in Angstroms
+        weights         = mass        # or mass or weighted
+        query           = "resname LGJ and name C5 C6 C8 C9 C11 C12 C14 C15"  # msys atom selection query
+        # optional model file (default is to use boot.file):
+        #file            = "model.dms"
+        }
+        {
+        form            = simple_harmonic
+        spring_constant = 65                 # in kcal/mol/A
+        equilibria      = [ 0 ]              # RMSD distance in Angstroms
+        weights         = mass        # or mass or weighted
+        query           = "resname LGK and name C5 C6 C8 C9 C11 C12 C14 C15"  # msys atom selection query
+        # optional model file (default is to use boot.file):
+        #file            = "model.dms"
+        }
+        ]
+}

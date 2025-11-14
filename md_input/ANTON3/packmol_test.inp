@@ -1,0 +1,46 @@
+tolerance 2.0
+filetype pdb
+output PfB_test.pdb
+
+
+structure structure1.pdb
+  number 1
+  fixed 40.0 40.0 40.0 0. 0. 0.
+end structure
+
+structure structure2.pdb
+  number 1
+  fixed 40.0 40.0 120.0 0. 0. 0.
+end structure
+
+
+structure structure3.pdb
+  number 1
+  fixed 40.0 120.0 40.0 0. 0. 0.
+end structure
+
+structure structure4.pdb
+  number 1
+  fixed 40.0 120.0 120.0 0. 0. 0.
+end structure
+
+structure structure5.pdb
+  number 1
+  fixed 120.0 40.0 40.0 0. 0. 0.
+end structure
+
+structure structure6.pdb
+  number 1
+  fixed 120.0 40.0 120.0 0. 0. 0.
+end structure
+
+structure structure7.pdb
+  number 1
+  fixed 120.0 120.0 40.0 0. 0. 0.
+end structure
+
+structure structure8.pdb
+  number 1
+  fixed 120.0 120.0 120.0 0. 0. 0.
+end structure
+
